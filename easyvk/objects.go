@@ -3,7 +3,7 @@ package easyvk
 // An UserObject contains information about user.
 // https://vk.com/dev/objects/user
 type UserObject struct {
-	ID         int `json:"id"`
+	ID         uint `json:"id"`
 	FirstName  string `json:"first_name"`
 	LastName   string `json:"last_name"`
 	Sex        int `json:"sex"`
@@ -121,7 +121,7 @@ type PhotoObject struct {
 	OwnerID int `json:"owner_id"`
 	UserID  int `json:"user_id"`
 	Sizes []struct {
-		Src    string `json:"src"`
+		Url    string `json:"url"`
 		Width  int `json:"width"`
 		Height int `json:"height"`
 		Type   string `json:"type"`

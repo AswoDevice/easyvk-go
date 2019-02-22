@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	version = "5.63"
+	version = "5.92"
 	apiURL  = "https://api.vk.com/method/"
 	authURL = "https://oauth.vk.com/authorize?" +
 		"client_id=%s" +
@@ -38,6 +38,7 @@ type VK struct {
 	Photos      Photos
 	Status      Status
 	Upload      Upload
+	Users       Users
 	Wall        Wall
 }
 
@@ -54,6 +55,7 @@ func WithToken(token string) VK {
 	vk.Photos = Photos{&vk }
 	vk.Status = Status{&vk }
 	vk.Upload = Upload{}
+	vk.Users = Users{&vk}
 	vk.Wall = Wall{&vk }
 	return vk
 }

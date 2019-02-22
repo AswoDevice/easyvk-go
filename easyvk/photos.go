@@ -77,3 +77,44 @@ func (p *Photos) SaveWallPhoto(par PhotosSaveWallPhotoParams) ([]PhotoObject, er
 	}
 	return info, nil
 }
+
+// PhotosGetResponse describes
+// https://vk.com/dev/photos.get
+type PhotosGetResponse struct {
+	Count int
+	Items []PhotoObject
+}
+
+// PhotosGetParams provides structure for
+// parameters for Get method.
+// https://vk.com/dev/photos.get
+type PhotosGetParams struct {
+	OwnerID  uint
+	AlbumID  string
+	Rev      bool
+	Offset   int
+	Count    int
+}
+
+// Returns a list of a user's or community's photos.
+// https://vk.com/dev/photos.get
+func (p *Photos) Get(par PhotosGetParams) (PhotosGetResponse, error) {
+	params := map[string]string{
+		"owner_id": fmt.Sprint(par.OwnerID),
+		"album_id": par.AlbumID,
+		"rev":      boolConverter(par.Rev),
+		"offset":   fmt.Sprint(par.Offset),
+		"count":    fmt.Sprint(par.Count),
+	}
+	resp, err := p.vk.Request("photos.get", params)
+	if err != nil {
+		return PhotosGetResponse{}, err
+	}
+
+	var photos PhotosGetResponse
+	err = json.Unmarshal(resp, &photos)
+	if err != nil {
+		return PhotosGetResponse{}, err
+	}
+	return photos, nil
+}
