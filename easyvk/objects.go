@@ -81,7 +81,16 @@ type UserObject struct {
 	IsFavorite       int `json:"is_favorite"`
 	IsHiddenFromFeed int `json:"is_hidden_from_feed"`
 	CommonCount      int `json:"common_count"`
-	Career           []interface{} `json:"career"`
+	Career[] struct {
+		GroupID   int    `json:"group_id"`
+		Company   string `json:"company"`
+		CountryId int    `json:"country_id"`
+		CityId    int    `json:"city_id"`
+		CityName  string `json:"city_name"`
+		From      int    `json:"from"`
+		Until     int    `json:"until"`
+		Position  string `json:"position"`
+	} `json:"career"`
 	Military         []interface{} `json:"military"`
 	University       int `json:"university"`
 	UniversityName   string `json:"university_name"`
@@ -105,7 +114,19 @@ type UserObject struct {
 	Tv           string `json:"tv"`
 	Books        string `json:"books"`
 	Games        string `json:"games"`
-	Universities []interface{} `json:"universities"`
+	Universities[] struct {
+		ID              int    `json:"id"`
+		Country         int    `json:"country"`
+		City            int    `json:"city"`
+		Name            string `json:"name"`
+		Faculty         int    `json:"faculty"`
+		FacultyName     string `json:"faculty_name"`
+		Chair           int    `json:"chair"`
+		ChairName       string `json:"chair_name"`
+		Graduation      int    `json:"graduation"`
+		EducationForm   string `json:"education_form"`
+		EducationStatus string `json:"education_status"`
+	} `json:"universities"`
 	Schools      []interface{} `json:"schools"`
 	About        string `json:"about"`
 	Relatives    []interface{} `json:"relatives"`
