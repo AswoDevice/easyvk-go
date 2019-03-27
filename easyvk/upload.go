@@ -14,9 +14,9 @@ import (
 // that helps with update to VK servers.
 type Upload struct{}
 
-// A UploadPhotoWallResponse describes an info
+// A UploadResponse describes an info
 // about uploaded photo.
-type UploadPhotoWallResponse struct {
+type UploadPhotoResponse struct {
 	Server int    `json:"server"`
 	Photo  string `json:"photo"`
 	Hash   string `json:"hash"`
@@ -24,24 +24,30 @@ type UploadPhotoWallResponse struct {
 
 // PhotoWall upload file (on filePath) to given url.
 // Return info about uploaded photo.
-func (u *Upload) PhotoWall(url, filePath string) (UploadPhotoWallResponse, error) {
+func (u *Upload) PhotoWall(url, filePath string) (UploadPhotoResponse, error) {
+	return u.Photo(url, filePath)
+}
+
+// Photo upload file (on filePath) to given url.
+// Return info about uploaded photo.
+func (u *Upload) Photo(url, filePath string) (UploadPhotoResponse, error) {
 	bodyBuf := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuf)
 
 	fileWriter, err := bodyWriter.CreateFormFile("photo", filePath)
 	if err != nil {
-		return UploadPhotoWallResponse{}, err
+		return UploadPhotoResponse{}, err
 	}
 
 	fh, err := os.Open(filePath)
 	if err != nil {
-		return UploadPhotoWallResponse{}, err
+		return UploadPhotoResponse{}, err
 	}
 	defer fh.Close()
 
 	_, err = io.Copy(fileWriter, fh)
 	if err != nil {
-		return UploadPhotoWallResponse{}, err
+		return UploadPhotoResponse{}, err
 	}
 
 	contentType := bodyWriter.FormDataContentType()
@@ -49,19 +55,19 @@ func (u *Upload) PhotoWall(url, filePath string) (UploadPhotoWallResponse, error
 
 	resp, err := http.Post(url, contentType, bodyBuf)
 	if err != nil {
-		return UploadPhotoWallResponse{}, err
+		return UploadPhotoResponse{}, err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return UploadPhotoWallResponse{}, err
+		return UploadPhotoResponse{}, err
 	}
 
-	var uploaded UploadPhotoWallResponse
+	var uploaded UploadPhotoResponse
 	err = json.Unmarshal(body, &uploaded)
 	if err != nil {
-		return UploadPhotoWallResponse{}, err
+		return UploadPhotoResponse{}, err
 	}
 
 	return uploaded, nil
