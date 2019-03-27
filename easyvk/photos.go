@@ -37,6 +37,53 @@ func (p *Photos) GetWallUploadServer(groupID uint) (PhotosGetWallUploadServerRes
 	return server, nil
 }
 
+// PhotosGetMessagesUploadServerResponse describes the server address
+// for photo upload onto a message.
+// https://vk.com/dev/photos.getMessagesUploadServer
+type PhotosGetMessagesUploadServerResponse struct {
+	UploadURL string `json:"upload_url"`
+	AlbumID   int `json:"album_id"`
+	UserID    int `json:"user_id"`
+}
+
+// GetMessagesUploadServer returns the server address for photo upload onto a message.
+// https://vk.com/dev/photos.getMessagesUploadServer
+func (p *Photos) GetMessagesUploadServer(peerId uint) (PhotosGetMessagesUploadServerResponse, error) {
+	params := map[string]string{"peer_id": fmt.Sprint(peerId) }
+	resp, err := p.vk.Request("photos.getMessagesUploadServer", params)
+	if err != nil {
+		return PhotosGetMessagesUploadServerResponse{}, err
+	}
+	var server PhotosGetMessagesUploadServerResponse
+	err = json.Unmarshal(resp, &server)
+	if err != nil {
+		return PhotosGetMessagesUploadServerResponse{}, err
+	}
+	return server, nil
+}
+
+// SaveMessagesPhoto saves a photo.
+// For upload look at file upload.go.
+// https://vk.com/dev/photos.saveMessagesPhoto
+func (p *Photos) SaveMessagesPhoto(photo string, server int, hash string) ([]PhotoObject, error) {
+	params := map[string]string{
+		"photo":  photo,
+		"hash":   hash,
+		"server": fmt.Sprint(server),
+	}
+	resp, err := p.vk.Request("photos.saveMessagesPhoto", params)
+	if err != nil {
+		return nil, err
+	}
+
+	var info []PhotoObject
+	err = json.Unmarshal(resp, &info)
+	if err != nil {
+		return nil, err
+	}
+	return info, nil
+}
+
 // PhotosSaveWallPhotoParams provides structure for
 // parameters for saveWallPhoto method.
 // https://vk.com/dev/photos.saveWallPhoto
