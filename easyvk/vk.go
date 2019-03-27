@@ -36,6 +36,7 @@ type VK struct {
 	Fave        Fave
 	Friends     Friends
 	Likes       Likes
+	Messages    Messages
 	Photos      Photos
 	Status      Status
 	Upload      Upload
@@ -54,6 +55,7 @@ func WithToken(token string) VK {
 	vk.Fave = Fave{&vk }
 	vk.Friends = Friends{&vk }
 	vk.Likes = Likes{&vk }
+	vk.Messages = Messages{&vk }
 	vk.Photos = Photos{&vk }
 	vk.Status = Status{&vk }
 	vk.Upload = Upload{}
