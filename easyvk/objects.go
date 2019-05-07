@@ -212,7 +212,6 @@ type VideoObject struct {
 	Repeat int `json:"repeat"`
 }
 
-
 // A GroupObject contains information about group.
 // https://vk.com/dev/objects/group
 type GroupObject struct {
@@ -227,4 +226,12 @@ type GroupObject struct {
 	Photo50      string `json:"photo_50"`
 	Photo100     string `json:"photo_100"`
 	Photo200     string `json:"photo_200"`
+}
+
+// A GroupObject contains information about group.
+// https://vk.com/dev/objects/group
+type CityObject struct {
+	ID        int    `json:"id"`
+	Title     string `json:"title"`
+	Important bool   `json:"important"`
 }

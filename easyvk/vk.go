@@ -33,6 +33,7 @@ type VK struct {
 	Version     string
 	Account     Account
 	Board       Board
+	Database    Database
 	Fave        Fave
 	Friends     Friends
 	Groups      Groups
@@ -53,6 +54,7 @@ func WithToken(token string) VK {
 	vk.Version = version
 	vk.Account = Account{&vk }
 	vk.Board = Board{&vk }
+	vk.Database = Database{&vk }
 	vk.Fave = Fave{&vk }
 	vk.Friends = Friends{&vk }
 	vk.Groups = Groups{&vk }
