@@ -48,7 +48,7 @@ func (m *Messages) Send(par MessagesSendParams) (uint, error) {
 		params["random_id"] = fmt.Sprint(par.RandomID)
 	}
 	if par.PeerID != 0 {
-		params["peer_id"] = fmt.Sprint(par.RandomID)
+		params["peer_id"] = fmt.Sprint(par.PeerID)
 	}
 	if par.Domain != "" {
 		params["domain"] = par.Domain
@@ -104,6 +104,45 @@ func (m *Messages) Send(par MessagesSendParams) (uint, error) {
 	return uint(messageId), err
 }
 
+// MessagesSetActivityParams provides structure for
+// parameters for get method.
+// https://vk.com/dev/messages.setActivity
+type MessagesSetActivityParams struct {
+	UserID          uint
+	Type            TypeActivity
+	PeerID          int
+	GroupId         uint
+}
+
+// Changes the status of a user as
+// typing in a conversation.
+// https://vk.com/dev/messages.setActivity
+func (m *Messages) SetActivity(par MessagesSetActivityParams) (uint, error) {
+	params := make(map[string]string)
+	if par.UserID != 0 {
+		params["user_id"] = fmt.Sprint(par.UserID)
+	}
+
+	params["type"] = fmt.Sprint(par.Type)
+
+	if par.PeerID != 0 {
+		params["peer_id"] = fmt.Sprint(par.PeerID)
+	}
+
+	if par.GroupId != 0 {
+		params["group_id"] = fmt.Sprint(par.GroupId)
+	}
+
+	resp, err := m.vk.Request("messages.setActivity", params)
+	if err != nil {
+		return 0, err
+	}
+
+	messageId, err := strconv.Atoi(string(resp))
+
+	return uint(messageId), err
+}
+
 type Keyboard struct {
 	OneTime bool `json:"one_time"`
 	Buttons [][]KeyboardButton `json:"buttons"`
@@ -150,3 +189,7 @@ func (builder *keyboardBuilder) Build() *Keyboard {
 		Buttons: builder.buttons,
 	}
 }
+
+type TypeActivity string
+const TypeActivityTyping TypeActivity = "typing"
+const TypeActivityAudio  TypeActivity = "audiomessage"
