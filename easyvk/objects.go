@@ -228,10 +228,51 @@ type GroupObject struct {
 	Photo200     string `json:"photo_200"`
 }
 
-// A GroupObject contains information about group.
+// A GroupObject contains information about city.
 // https://vk.com/dev/objects/group
 type CityObject struct {
 	ID        int    `json:"id"`
 	Title     string `json:"title"`
 	Important bool   `json:"important"`
+}
+
+// A AttachmentMObject contains information about attachments_m.
+// https://vk.com/dev/objects/attachments_m
+type AttachmentMObject struct {
+	Type  TypeAttachmentM `json:"type"`
+	Photo PhotoObject     `json:"photo"`
+}
+
+type TypeAttachmentM string
+
+const TypeAttachmentMPhoto       TypeAttachmentM = "photo"
+const TypeAttachmentMVideo       TypeAttachmentM = "video"
+const TypeAttachmentMAudio       TypeAttachmentM = "audio"
+const TypeAttachmentMDoc         TypeAttachmentM = "doc"
+const TypeAttachmentMLink        TypeAttachmentM = "link"
+const TypeAttachmentMMarket      TypeAttachmentM = "market"
+const TypeAttachmentMMarketAlbum TypeAttachmentM = "market_album"
+const TypeAttachmentMWall    	 TypeAttachmentM = "wall"
+const TypeAttachmentMWallReply   TypeAttachmentM = "wall_reply"
+const TypeAttachmentMSticker  	 TypeAttachmentM = "sticker"
+const TypeAttachmentMGift  	 	 TypeAttachmentM = "gift"
+
+// A MessageObject contains information about message.
+// https://vk.com/dev/objects/message
+type MessageObject struct {
+	ID                    int                 `json:"id"`
+	Date                  int                 `json:"date"`
+	PeerID                int                 `json:"peer_id"`
+	FromID                uint                `json:"from_id"`
+	Text                  string              `json:"text"`
+	RandomID              int64               `json:"random_id"`
+	Ref                   string              `json:"ref"`
+	RefSource             string              `json:"ref_source"`
+	Attachments           []AttachmentMObject `json:"attachments"`
+	Important             bool                `json:"important"`
+	Payload               string              `json:"payload"`
+	Out                   int                 `json:"out"`
+	ConversationMessageID int                 `json:"conversation_message_id"`
+	FwdMessages           []interface{}       `json:"fwd_messages"`
+	IsHidden              bool                `json:"is_hidden"`
 }
