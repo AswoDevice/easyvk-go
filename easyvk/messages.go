@@ -19,7 +19,7 @@ type Messages struct {
 // https://vk.com/dev/messages.send
 type MessagesSendParams struct {
 	UserID          uint
-	RandomID        int32
+	RandomID        int64
 	PeerID          int
 	Domain          string
 	ChatId          uint
