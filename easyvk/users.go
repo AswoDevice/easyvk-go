@@ -1,6 +1,7 @@
 package easyvk
 
 import (
+	"carousel/service/logger"
 	"encoding/json"
 	"fmt"
 )
@@ -36,7 +37,7 @@ func (u *Users) Get(par UsersGetParams) ([]UserObject, error) {
 	if err != nil {
 		return array, err
 	}
-
+logger.Debug(string(resp))
 	err = json.Unmarshal(resp, &array)
 	if err != nil {
 		return array, err
