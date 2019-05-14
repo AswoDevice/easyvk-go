@@ -72,3 +72,48 @@ func (u *Upload) Photo(url, filePath string) (UploadPhotoResponse, error) {
 
 	return uploaded, nil
 }
+
+// Photo upload file (on filePath) to given url.
+// Return info about uploaded photo.
+func (u *Upload) PhotoFromUrl(url, photoUrl string) (UploadPhotoResponse, error) {
+	bodyBuf := &bytes.Buffer{}
+	bodyWriter := multipart.NewWriter(bodyBuf)
+
+	fileWriter, err := bodyWriter.CreateFormFile("photo", "photo.jpg")
+	if err != nil {
+		return UploadPhotoResponse{}, err
+	}
+
+	r, e := http.Get(photoUrl)
+	if e != nil {
+		return UploadPhotoResponse{}, e
+	}
+	defer r.Body.Close()
+
+	_, err = io.Copy(fileWriter, r.Body)
+	if err != nil {
+		return UploadPhotoResponse{}, err
+	}
+
+	contentType := bodyWriter.FormDataContentType()
+	bodyWriter.Close()
+
+	resp, err := http.Post(url, contentType, bodyBuf)
+	if err != nil {
+		return UploadPhotoResponse{}, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return UploadPhotoResponse{}, err
+	}
+
+	var uploaded UploadPhotoResponse
+	err = json.Unmarshal(body, &uploaded)
+	if err != nil {
+		return UploadPhotoResponse{}, err
+	}
+
+	return uploaded, nil
+}
