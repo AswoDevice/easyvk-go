@@ -24,6 +24,11 @@ const (
 		"&display=wap" +
 		"&v=%s" +
 		"&response_type=token"
+	authClientFlowURL = "https://oauth.vk.com/access_token?" +
+		"client_id=%s" +
+		"&client_secret=%s" +
+		"&v=%s" +
+		"&grant_type=client_credentials"
 )
 
 // VK defines a set of functions for
@@ -115,6 +120,28 @@ func WithAuth(login, password, clientID, scope string) (VK, error) {
 	}
 
 	return WithToken(urlArgs["access_token"][0]), nil
+}
+
+func WithClientFlow(clientID, clientSecret string) (VK, error) {
+	u := fmt.Sprintf(authClientFlowURL, clientID, clientSecret, version)
+
+	resp, err := http.DefaultClient.Get(u)
+	if err != nil {
+		return VK{}, err
+	}
+	defer resp.Body.Close()
+
+	type Response struct {
+		AccessToken string `json:"access_token"`
+	}
+
+	var response Response
+	err = json.NewDecoder(resp.Body).Decode(&response)
+	if err != nil {
+		return VK{}, err
+	}
+
+	return WithToken(response.AccessToken), nil
 }
 
 func parseForm(body io.ReadCloser) (url.Values, string) {
