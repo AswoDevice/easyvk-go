@@ -41,6 +41,7 @@ type VK struct {
 	Messages    Messages
 	Photos      Photos
 	Status      Status
+	Storage     Storage
 	Upload      Upload
 	Users       Users
 	Wall        Wall
@@ -62,6 +63,7 @@ func WithToken(token string) VK {
 	vk.Messages = Messages{&vk }
 	vk.Photos = Photos{&vk }
 	vk.Status = Status{&vk }
+	vk.Storage = Storage{&vk }
 	vk.Upload = Upload{}
 	vk.Users = Users{&vk}
 	vk.Wall = Wall{&vk }
