@@ -3,15 +3,16 @@
 package easyvk
 
 import (
-	"net/url"
-	"net/http"
-	"io/ioutil"
-	"fmt"
 	"encoding/json"
-	"golang.org/x/net/html"
-	"net/http/cookiejar"
-	"io"
 	"errors"
+	"fmt"
+	"golang.org/x/net/html"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"net/http/cookiejar"
+	"net/url"
+	"time"
 )
 
 const (
@@ -52,19 +53,19 @@ func WithToken(token string) VK {
 	vk := VK{}
 	vk.AccessToken = token
 	vk.Version = version
-	vk.Account = Account{&vk }
-	vk.Board = Board{&vk }
-	vk.Database = Database{&vk }
-	vk.Fave = Fave{&vk }
-	vk.Friends = Friends{&vk }
-	vk.Groups = Groups{&vk }
-	vk.Likes = Likes{&vk }
-	vk.Messages = Messages{&vk }
-	vk.Photos = Photos{&vk }
-	vk.Status = Status{&vk }
+	vk.Account = Account{&vk}
+	vk.Board = Board{&vk}
+	vk.Database = Database{&vk}
+	vk.Fave = Fave{&vk}
+	vk.Friends = Friends{&vk}
+	vk.Groups = Groups{&vk}
+	vk.Likes = Likes{&vk}
+	vk.Messages = Messages{&vk}
+	vk.Photos = Photos{&vk}
+	vk.Status = Status{&vk}
 	vk.Upload = Upload{}
 	vk.Users = Users{&vk}
-	vk.Wall = Wall{&vk }
+	vk.Wall = Wall{&vk}
 	return vk
 }
 
@@ -167,7 +168,20 @@ func parseForm(body io.ReadCloser) (url.Values, string) {
 }
 
 // Request provides access to VK API methods.
-func (vk *VK) Request(method string, params map[string]string) ([]byte, error) {
+func (vk *VK) Request(method string, params map[string]string) (data []byte, err error) {
+	for attempt := 0; attempt < 10; attempt++ {
+		data, err = vk.RequestAttempt(method, params)
+		if err == nil {
+			return data, err
+		}
+		time.Sleep(time.Second)
+	}
+
+	return data, err
+}
+
+// Request provides access to VK API methods.
+func (vk *VK) RequestAttempt(method string, params map[string]string) ([]byte, error) {
 	u, err := url.Parse(apiURL + method)
 	if err != nil {
 		return nil, err
