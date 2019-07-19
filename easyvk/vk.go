@@ -9,6 +9,7 @@ import (
 	"golang.org/x/net/html"
 	"io"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -174,7 +175,10 @@ func (vk *VK) Request(method string, params map[string]string) (data []byte, err
 		if err == nil {
 			return data, err
 		}
-		time.Sleep(time.Second)
+		duration :=
+			(500 * time.Millisecond) +
+				(time.Millisecond * time.Duration(rand.Int31n(2000)))
+		time.Sleep(duration)
 	}
 
 	return data, err
