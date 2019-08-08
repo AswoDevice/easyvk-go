@@ -32,6 +32,7 @@ func (f *Storage) Get(userId uint32, key string) (string, error) {
 	return value, nil
 }
 
+
 // Returns a value of variable with the
 // name set by key parameter.
 // https://vk.com/dev/storage.set
