@@ -3,15 +3,17 @@
 package easyvk
 
 import (
-	"net/url"
-	"net/http"
-	"io/ioutil"
-	"fmt"
 	"encoding/json"
-	"golang.org/x/net/html"
-	"net/http/cookiejar"
-	"io"
 	"errors"
+	"fmt"
+	"golang.org/x/net/html"
+	"io"
+	"io/ioutil"
+	"math/rand"
+	"net/http"
+	"net/http/cookiejar"
+	"net/url"
+	"time"
 )
 
 const (
@@ -198,7 +200,23 @@ func parseForm(body io.ReadCloser) (url.Values, string) {
 }
 
 // Request provides access to VK API methods.
-func (vk *VK) Request(method string, params map[string]string) ([]byte, error) {
+func (vk *VK) Request(method string, params map[string]string) (data []byte, err error) {
+	for attempt := 0; attempt < 10; attempt++ {
+		data, err = vk.RequestAttempt(method, params)
+		if err == nil {
+			return data, err
+		}
+		duration :=
+			(500 * time.Millisecond) +
+				(time.Millisecond * time.Duration(rand.Int31n(2000)))
+		time.Sleep(duration)
+	}
+
+	return data, err
+}
+
+// Request provides access to VK API methods.
+func (vk *VK) RequestAttempt(method string, params map[string]string) ([]byte, error) {
 	u, err := url.Parse(apiURL + method)
 	if err != nil {
 		return nil, err
