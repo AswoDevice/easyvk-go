@@ -36,22 +36,23 @@ const (
 // VK defines a set of functions for
 // working with VK API.
 type VK struct {
-	AccessToken string
-	Version     string
-	Account     Account
-	Board       Board
-	Database    Database
-	Fave        Fave
-	Friends     Friends
-	Groups      Groups
-	Likes       Likes
-	Messages    Messages
-	Photos      Photos
-	Status      Status
-	Storage     Storage
-	Upload      Upload
-	Users       Users
-	Wall        Wall
+	AccessToken   string
+	Version       string
+	Account       Account
+	Board         Board
+	Database      Database
+	Fave          Fave
+	Friends       Friends
+	Groups        Groups
+	Likes         Likes
+	Messages      Messages
+	Notifications Notifications
+	Photos        Photos
+	Status        Status
+	Storage       Storage
+	Upload        Upload
+	Users         Users
+	Wall          Wall
 }
 
 // WithToken helps to initialize your
@@ -68,6 +69,7 @@ func WithToken(token string) VK {
 	vk.Groups = Groups{&vk}
 	vk.Likes = Likes{&vk}
 	vk.Messages = Messages{&vk}
+	vk.Notifications = Notifications{&vk}
 	vk.Photos = Photos{&vk}
 	vk.Status = Status{&vk}
 	vk.Storage = Storage{&vk}
