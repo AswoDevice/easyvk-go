@@ -1,7 +1,6 @@
 package easyvk
 
 import (
-	"carousel/service/logger"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -86,8 +85,6 @@ func (m *Messages) Send(par MessagesSendParams) (uint, error) {
 	if par.Keyboard != nil {
 		if data, err := json.Marshal(par.Keyboard); err == nil {
 			params["keyboard"] = string(data)
-			logger.Info(string(data))
-
 		}
 	}
 	if par.Payload != "" {
