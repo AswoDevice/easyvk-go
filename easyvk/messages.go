@@ -182,6 +182,57 @@ func (m *Messages) GetById(par GetByIdParams) (GetByIdResponse, error) {
 	return getByIdResp, nil
 }
 
+// GetHistoryParams provides structure for
+// parameters for get method.
+// https://vk.com/dev/messages.getHistory
+type GetHistoryParams struct {
+	Offset         int
+	Count          int
+	UserId         int
+	PeerId         int
+	StartMessageId int
+	Rev            bool
+	Extended       bool
+	Fields         string
+	GroupId        uint
+}
+
+// GetHistoryResponse describes
+// https://vk.com/dev/messages.getHistory
+type GetHistoryResponse struct {
+	Count int
+	Items []MessageObject
+}
+
+// Returns message history for the
+// specified user or group chat.
+// https://vk.com/dev/messages.getHistory
+func (m *Messages) GetHistory(par GetHistoryParams) (GetHistoryResponse, error) {
+	params := make(map[string]string)
+
+	params["offset"] = fmt.Sprint(par.Offset)
+	params["count"] = fmt.Sprint(par.Count)
+	params["user_id"] = fmt.Sprint(par.UserId)
+	params["peer_id"] = fmt.Sprint(par.PeerId)
+	//params["start_message_id"] = fmt.Sprint(par.StartMessageId)
+	params["rev"] = boolConverter(par.Rev)
+	params["extended"] = boolConverter(par.Extended)
+	params["fields"] = par.Fields
+	params["group_id"] = fmt.Sprint(par.GroupId)
+
+	resp, err := m.vk.Request("messages.getHistory", params)
+	if err != nil {
+		return GetHistoryResponse{}, err
+	}
+fmt.Println(string(resp))
+	var getHistoryResp GetHistoryResponse
+	err = json.Unmarshal(resp, &getHistoryResp)
+	if err != nil {
+		return GetHistoryResponse{}, err
+	}
+	return getHistoryResp, nil
+}
+
 type Keyboard struct {
 	OneTime bool `json:"one_time"`
 	Buttons [][]KeyboardButton `json:"buttons"`
