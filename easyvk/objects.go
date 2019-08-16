@@ -263,7 +263,7 @@ type MessageObject struct {
 	ID                    int                 `json:"id"`
 	Date                  int                 `json:"date"`
 	PeerID                int                 `json:"peer_id"`
-	FromID                uint                `json:"from_id"`
+	FromID                int                 `json:"from_id"`
 	Text                  string              `json:"text"`
 	RandomID              int64               `json:"random_id"`
 	Ref                   string              `json:"ref"`

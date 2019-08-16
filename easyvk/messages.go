@@ -140,6 +140,48 @@ func (m *Messages) SetActivity(par MessagesSetActivityParams) (uint, error) {
 	return uint(messageId), err
 }
 
+// GetByIdParams provides structure for
+// parameters for get method.
+// https://vk.com/dev/messages.getById
+type GetByIdParams struct {
+	MessageIDs    string
+	PreviewLength int
+	Extended      bool
+	Fields        string
+	GroupId       uint
+}
+
+// GetByIdResponse describes
+// https://vk.com/dev/messages.getById
+type GetByIdResponse struct {
+	Count int
+	Items []MessageObject
+}
+
+// Returns messages by their IDs.
+// https://vk.com/dev/messages.getById
+func (m *Messages) GetById(par GetByIdParams) (GetByIdResponse, error) {
+	params := make(map[string]string)
+
+	params["message_ids"] = par.MessageIDs
+	params["preview_length"] = fmt.Sprint(par.PreviewLength)
+	params["extended"] = boolConverter(par.Extended)
+	params["fields"] = par.Fields
+	params["group_id"] = fmt.Sprint(par.GroupId)
+
+	resp, err := m.vk.Request("messages.getById", params)
+	if err != nil {
+		return GetByIdResponse{}, err
+	}
+
+	var getByIdResp GetByIdResponse
+	err = json.Unmarshal(resp, &getByIdResp)
+	if err != nil {
+		return GetByIdResponse{}, err
+	}
+	return getByIdResp, nil
+}
+
 type Keyboard struct {
 	OneTime bool `json:"one_time"`
 	Buttons [][]KeyboardButton `json:"buttons"`
