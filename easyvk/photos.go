@@ -138,6 +138,7 @@ type PhotosGetResponse struct {
 type PhotosGetParams struct {
 	OwnerID  uint
 	AlbumID  string
+	PhotoIDs string
 	Rev      bool
 	Offset   int
 	Count    int
@@ -146,13 +147,27 @@ type PhotosGetParams struct {
 // Returns a list of a user's or community's photos.
 // https://vk.com/dev/photos.get
 func (p *Photos) Get(par PhotosGetParams) (PhotosGetResponse, error) {
-	params := map[string]string{
-		"owner_id": fmt.Sprint(par.OwnerID),
-		"album_id": par.AlbumID,
-		"rev":      boolConverter(par.Rev),
-		"offset":   fmt.Sprint(par.Offset),
-		"count":    fmt.Sprint(par.Count),
+	params := make(map[string]string)
+
+	if par.OwnerID != 0 {
+		params["owner_id"] = fmt.Sprint(par.OwnerID)
 	}
+
+	if par.AlbumID != "" {
+		params["album_id"] = par.AlbumID
+	}
+
+	params["photo_ids"] = par.PhotoIDs
+	params["rev"] = boolConverter(par.Rev)
+
+	if par.Offset != 0 {
+		params["offset"] = fmt.Sprint(par.Offset)
+	}
+
+	if par.Count != 0 {
+		params["count"] = fmt.Sprint(par.Count)
+	}
+
 	resp, err := p.vk.Request("photos.get", params)
 	if err != nil {
 		return PhotosGetResponse{}, err
