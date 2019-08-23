@@ -224,7 +224,7 @@ func (m *Messages) GetHistory(par GetHistoryParams) (GetHistoryResponse, error) 
 	if err != nil {
 		return GetHistoryResponse{}, err
 	}
-fmt.Println(string(resp))
+
 	var getHistoryResp GetHistoryResponse
 	err = json.Unmarshal(resp, &getHistoryResp)
 	if err != nil {
