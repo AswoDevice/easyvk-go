@@ -105,10 +105,10 @@ func (m *Messages) Send(par MessagesSendParams) (uint, error) {
 // parameters for get method.
 // https://vk.com/dev/messages.setActivity
 type MessagesSetActivityParams struct {
-	UserID          uint
-	Type            TypeActivity
-	PeerID          int
-	GroupId         uint
+	UserID  uint
+	Type    TypeActivity
+	PeerID  int
+	GroupId uint
 }
 
 // Changes the status of a user as
@@ -233,26 +233,75 @@ func (m *Messages) GetHistory(par GetHistoryParams) (GetHistoryResponse, error) 
 	return getHistoryResp, nil
 }
 
+// https://vk.com/dev/messages.getConversations
+type GetConversationsParams struct {
+	Offset         int
+	Count          int
+	Filter         TypeFilter
+	Extended       bool
+	StartMessageId int
+	Fields         string
+	GroupId        uint
+	MajorSortId    uint
+}
+
+// https://vk.com/dev/messages.getConversations
+type GetConversationsResponse struct {
+	Count int `json:"count"`
+	Items []struct {
+		MessageObject      MessageObject      `json:"last_message"`
+		ConversationObject ConversationObject `json:"conversation"`
+	}
+	UnreadCount int `json:"unread_count"`
+	//Profiles    []UserObject  `json:"profiles"`
+	//Groups      []GroupObject `json:"groups"`
+}
+
+// https://vk.com/dev/messages.getConversations
+func (m *Messages) GetConversations(par GetConversationsParams) (GetConversationsResponse, error) {
+	params := make(map[string]string)
+
+	params["offset"] = fmt.Sprint(par.Offset)
+	params["count"] = fmt.Sprint(par.Count)
+	params["filter"] = fmt.Sprint(par.Filter)
+	params["extended"] = boolConverter(par.Extended)
+	params["fields"] = par.Fields
+	params["group_id"] = fmt.Sprint(par.GroupId)
+	params["major_sort_id"] = fmt.Sprint(par.MajorSortId)
+
+	resp, err := m.vk.Request("messages.getConversations", params)
+	if err != nil {
+		return GetConversationsResponse{}, err
+	}
+
+	var getConversationsResp GetConversationsResponse
+	err = json.Unmarshal(resp, &getConversationsResp)
+	if err != nil {
+		return GetConversationsResponse{}, err
+	}
+	return getConversationsResp, nil
+}
+
 type Keyboard struct {
-	OneTime bool `json:"one_time"`
+	OneTime bool               `json:"one_time"`
 	Buttons [][]KeyboardButton `json:"buttons"`
 }
 
 type KeyboardButton struct {
 	Action KeyboardButtonAction `json:"action"`
-	Color KeyboardButtonColor `json:"color"`
+	Color  KeyboardButtonColor  `json:"color"`
 }
 
 type KeyboardButtonAction struct {
-	Type string `json:"type"`
+	Type    string `json:"type"`
 	Payload string `json:"payload"`
-	Label string `json:"label"`
+	Label   string `json:"label"`
 }
 
 type KeyboardButtonColor string
 
-const KeyboardButtonColorPrimary  KeyboardButtonColor = "primary"
-const KeyboardButtonColorDefault  KeyboardButtonColor = "default"
+const KeyboardButtonColorPrimary KeyboardButtonColor = "primary"
+const KeyboardButtonColorDefault KeyboardButtonColor = "default"
 const KeyboardButtonColorNegative KeyboardButtonColor = "negative"
 const KeyboardButtonColorPositive KeyboardButtonColor = "positive"
 
@@ -265,11 +314,11 @@ func NewKeyboardBuilder() *keyboardBuilder {
 	return &keyboardBuilder{buttons: make([][]KeyboardButton, 0)}
 }
 
-func (builder *keyboardBuilder) NewRow(buttons ...KeyboardButton)  {
+func (builder *keyboardBuilder) NewRow(buttons ...KeyboardButton) {
 	builder.buttons = append(builder.buttons, buttons)
 }
 
-func (builder *keyboardBuilder) SetOneTime(oneTime bool)  {
+func (builder *keyboardBuilder) SetOneTime(oneTime bool) {
 	builder.oneTime = oneTime
 }
 
@@ -281,5 +330,15 @@ func (builder *keyboardBuilder) Build() *Keyboard {
 }
 
 type TypeActivity string
+
 const TypeActivityTyping TypeActivity = "typing"
-const TypeActivityAudio  TypeActivity = "audiomessage"
+const TypeActivityAudio TypeActivity = "audiomessage"
+
+type TypeFilter string
+
+const (
+	TypeFilterAll        TypeFilter = "all"
+	TypeFilterUnread     TypeFilter = "unread"
+	TypeFilterImportant  TypeFilter = "important"
+	TypeFilterUnanswered TypeFilter = "unanswered"
+)
